@@ -108,7 +108,7 @@ def get_wiki_content_by_url(url):
             if 'width' in img.attrs: del img['width']
             if 'height' in img.attrs: del img['height']
 
-        # CSS (CİLTLİ ANSİKLOPEDİ - GERİ GETİRİLDİ)
+        # CSS (CİLTLİ ANSİKLOPEDİ)
         custom_css_js = """
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&family=Merriweather:wght@300;700&display=swap');
@@ -161,16 +161,13 @@ def get_wiki_content_by_url(url):
 # --- VERİTABANI & AYARLAR ---
 # ==============================================================================
 def get_db():
-    conn = sqlite3.connect('tarih_ligi_final_v39.db', check_same_thread=False)
+    conn = sqlite3.connect('tarih_ligi_final_v40.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
 def init_db():
     conn = get_db(); c = conn.cursor()
-    # active_seconds sütunu (v38 özelliği)
     c.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, xp INTEGER DEFAULT 0, total_questions INTEGER DEFAULT 0, last_seen DATETIME, active_seconds INTEGER DEFAULT 0)''')
-    
-    # Eski veritabanlarında active_seconds yoksa ekle
     try:
         c.execute("ALTER TABLE users ADD COLUMN active_seconds INTEGER DEFAULT 0")
     except:
@@ -185,7 +182,6 @@ def init_db():
     default_theme = {"gold_color": "#DAA520", "app_title": "TARİH LİGİ", "crown_text": "👑 YKS TARİH 👑"}
     for k, v in default_theme.items(): c.execute("INSERT OR IGNORE INTO theme_config (setting_key, value) VALUES (?, ?)", (k, v))
     
-    # Modülleri Sıfırla ve Yeniden Yükle
     c.execute("DELETE FROM module_config")
     konu_listesi = list(KONU_AYARLARI.keys())
     ikonlar = ["⏳", "🦴", "🏰", "🐺", "🕌", "☪️", "🏹", "🌱", "⚔️", "🎨", "🌍", "👑", "📜", "⚖️", "⚙️", "🇫🇷", "🎩", "🤝", "🏭", "💣", "🇹🇷", "🌞", "🏛️", "☢️", "❄️", "🚀", "🔭"]
@@ -214,22 +210,16 @@ def set_sys_val(key, val):
     conn = get_db(); c = conn.cursor(); c.execute("INSERT OR REPLACE INTO system (key, value) VALUES (?, ?)", (key, val)); conn.commit(); conn.close()
 
 def update_user_activity(user):
-    """Kullanıcının aktiflik süresini hesaplar ve günceller."""
     conn = get_db(); c = conn.cursor()
     now = datetime.now()
-    
     c.execute("SELECT last_seen, active_seconds FROM users WHERE username = ?", (user,))
     row = c.fetchone()
-    
     if row and row['last_seen']:
         last_seen_time = datetime.strptime(row['last_seen'], "%Y-%m-%d %H:%M:%S")
         time_diff = (now - last_seen_time).total_seconds()
-        
-        # 10 dakikadan (600 sn) azsa aktif say
         if time_diff < 600:
             new_active_seconds = row['active_seconds'] + int(time_diff)
             c.execute("UPDATE users SET active_seconds = ? WHERE username = ?", (new_active_seconds, user))
-    
     now_str = now.strftime("%Y-%m-%d %H:%M:%S")
     c.execute("UPDATE users SET last_seen = ? WHERE username = ?", (now_str, user))
     conn.commit(); conn.close()
@@ -252,7 +242,6 @@ def mark_message_read(msg_id):
 def update_user_xp(user, new_xp):
     conn = get_db(); c = conn.cursor(); c.execute("UPDATE users SET xp=? WHERE username=?", (new_xp, user)); conn.commit(); conn.close()
 
-# Gelişmiş Admin Raporu
 def get_detailed_user_report(user):
     conn = get_db()
     mistakes = pd.read_sql("SELECT topic as 'Konu', question as 'Soru', wrong_answer as 'Verilen Yanlış Cevap', timestamp as 'Tarih' FROM mistakes WHERE username=? ORDER BY id DESC LIMIT 60", conn, params=(user,))
@@ -1663,8 +1652,8 @@ if st.session_state.get('page') == 'quiz':
     bg_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Vienna_Battle_1683.jpg/1280px-Vienna_Battle_1683.jpg"
     opacity = "0.2"
 else:
-    bg_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Reprise_ch%C3%A2teau_Buda_1686.jpg/2560px-Reprise_ch%C3%A2teau_Buda_1686.jpg"
-    opacity = "0.2"
+    bg_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Foundation_of_the_Ottoman_Empire.jpg/1280px-Foundation_of_the_Ottoman_Empire.jpg"
+    opacity = "0.5"
 
 st.markdown(f"""
 <style>
@@ -1694,6 +1683,23 @@ st.markdown(f"""
     .admin-stat-box {{ background-color: #2e1a1a; padding: 15px; border-radius: 10px; border: 1px solid #FFD700; text-align: center; }}
     .admin-stat-value {{ font-size: 24px; font-weight: bold; color: white; }}
     .admin-stat-label {{ font-size: 14px; color: #ccc; }}
+    
+    /* GÜNCELLENEN LEADERBOARD CSS (YARI OPAK) */
+    .leaderboard-container {{ 
+        background-color: rgba(30, 60, 47, 0.9); 
+        border: 2px solid #DAA520; 
+        border-radius: 10px; 
+        padding: 8px 15px; 
+        margin-bottom: 15px; 
+        display: flex; 
+        justify-content: center; 
+        gap: 15px; 
+        align-items: center; 
+        box-shadow: 0 5px 10px rgba(0,0,0,0.5); 
+    }}
+    .leader-badge {{ color: white; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 5px; }}
+    .leader-xp {{ color: #FFD700; margin-left: 3px; font-size: 12px; }}
+    .announcement-solid {{ background-color: #800000; color: white; padding: 10px; border-radius: 8px; border: 2px solid gold; text-align: center; font-weight: bold; margin-bottom: 15px; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -1703,9 +1709,7 @@ if 'xp' not in st.session_state: st.session_state.xp = 0
 if 'page' not in st.session_state: st.session_state.page = 'login'
 if 'current_ogm_page' not in st.session_state: st.session_state.current_ogm_page = None
 
-# HER SAYFA YENİLENMESİNDE AKTİFLİK SÜRESİNİ GÜNCELLE
-if st.session_state.user:
-    update_user_activity(st.session_state.user)
+if st.session_state.user: update_user_activity(st.session_state.user)
 
 # --- SIDEBAR ---
 with st.sidebar:
@@ -1713,7 +1717,6 @@ with st.sidebar:
     if st.session_state.user and st.session_state.user != "ADMIN": 
         st.success(f"Hoşgeldin, {st.session_state.user}")
     
-    # ------------------ ADMİN PANELİ GİRİŞİ ------------------
     with st.expander("👑 YÖNETİCİ", expanded=(st.session_state.user == "ADMIN")):
         if st.session_state.user != "ADMIN":
             with st.form("admin_form"):
@@ -1724,10 +1727,7 @@ with st.sidebar:
         else:
             if st.button("Çıkış"): st.session_state.user=None; st.rerun()
             st.markdown("---")
-            if st.button("📊 ANALİZ PANELİNE GİT"):
-                st.session_state.page = 'admin_panel'
-                st.rerun()
-    # ---------------------------------------------------------
+            if st.button("📊 ANALİZ PANELİNE GİT"): st.session_state.page = 'admin_panel'; st.rerun()
     
     st.markdown("### 👥 AKTİF LİSTE")
     ud = get_all_users_status()
@@ -1754,7 +1754,7 @@ if st.session_state.page == 'login':
             conn.commit();conn.close()
             st.session_state.user=u; st.session_state.page='home'; st.rerun()
 
-# --- ADMIN ANALİZ PANELİ ---
+# --- ADMIN PANEL ---
 elif st.session_state.page == 'admin_panel' and st.session_state.user == "ADMIN":
     st.markdown("<h2 style='color:#FFD700; text-align:center;'>👑 YÖNETİCİ KOÇLUK PANELİ</h2>", unsafe_allow_html=True)
     if st.button("🏠 Ana Sayfaya Dön"): st.session_state.page = 'home'; st.rerun()
@@ -1765,7 +1765,6 @@ elif st.session_state.page == 'admin_panel' and st.session_state.user == "ADMIN"
     
     if selected_student:
         mistakes, stats = get_detailed_user_report(selected_student)
-        
         if not stats.empty:
             xp = stats.iloc[0]['xp']
             total_q = stats.iloc[0]['total_questions']
@@ -1840,8 +1839,7 @@ elif st.session_state.page == 'home':
                 if st.button(f"{m['icon']} {m['title']}", key=m['module_key']):
                     st.session_state.quiz_topic = m['module_key']
                     raw_questions = SORU_HAVUZU.get(m['module_key'], [])
-                    if not raw_questions:
-                        st.warning("Bu konu için henüz soru eklenmedi!")
+                    if not raw_questions: st.warning("Bu konu için henüz soru eklenmedi!")
                     else:
                         st.session_state.quiz_q = raw_questions[:]
                         random.shuffle(st.session_state.quiz_q)
@@ -1853,13 +1851,10 @@ elif st.session_state.page == 'home':
     with c_out2:
         if st.button("ÇIKIŞ YAP", use_container_width=True): st.session_state.user=None; st.session_state.page='login'; st.rerun()
 
-# --- STUDY (GÖRSEL ODAKLI ÇALIŞMA) ---
+# --- STUDY ---
 elif st.session_state.page == 'study':
     st.markdown("<div class='announcement-solid'>📚 TARİH ARAŞTIRMA MERKEZİ</div>", unsafe_allow_html=True)
-    if st.button("⬅ ANA MENÜYE DÖN"): 
-        st.session_state.page='home'; 
-        st.session_state.current_ogm_page = None; 
-        st.rerun()
+    if st.button("⬅ ANA MENÜYE DÖN"): st.session_state.page='home'; st.session_state.current_ogm_page = None; st.rerun()
     
     secilen_konu = st.selectbox("Çalışmak istediğin konuyu seç:", list(KONU_AYARLARI.keys()))
     
@@ -1869,7 +1864,6 @@ elif st.session_state.page == 'study':
         st.write("")
 
         if view_mode == "📖 DERS KİTABI (MEB)":
-            # OTO SCROLL EKLENTİSİ
             components.html("""<script>window.onload = function(){try{window.frameElement.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}};</script>""", height=0)
             if data["ogm_pages"]:
                 page_range = data["ogm_pages"]
@@ -1895,7 +1889,6 @@ elif st.session_state.page == 'study':
         else:
             if data["wiki"]:
                 with st.spinner("Kaynaklar derleniyor..."):
-                    # WIKI İÇİN OTO SCROLL VE CSS BURADA ÇALIŞACAK
                     content_html = get_wiki_content_by_url(data["wiki"])
                     components.html(content_html, height=600, scrolling=True)
             else: st.info("Ansiklopedi kaynağı bulunamadı.")
