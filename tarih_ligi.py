@@ -1652,7 +1652,7 @@ if st.session_state.get('page') == 'quiz':
     bg_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Vienna_Battle_1683.jpg/1280px-Vienna_Battle_1683.jpg"
     opacity = "0.2"
 else:
-    bg_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Foundation_of_the_Ottoman_Empire.jpg/1280px-Foundation_of_the_Ottoman_Empire.jpg"
+    bg_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Reprise_ch%C3%A2teau_Buda_1686.jpg/2560px-Reprise_ch%C3%A2teau_Buda_1686.jpg"
     opacity = "0.5"
 
 st.markdown(f"""
