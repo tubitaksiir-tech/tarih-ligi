@@ -29,10 +29,15 @@ else:
 
 # 3. Ayarı Uygula
 st.set_page_config(
+   # --- EN TEPEYE (Importlardan hemen sonraya) ---
+if 'sidebar_durumu' not in st.session_state:
+    st.session_state.sidebar_durumu = 'expanded' # İlk açılışta açık olsun
+
+st.set_page_config(
     page_title="TARİH LİGİ - YKS",
     page_icon="🦅",
     layout="wide",
-    initial_sidebar_state=sidebar_modu 
+    initial_sidebar_state=st.session_state.sidebar_durumu
 )
 
 # ==============================================================================
@@ -1783,6 +1788,13 @@ if st.session_state.user: update_user_activity(st.session_state.user)
 
 # --- SIDEBAR ---
 with st.sidebar:
+# --- SIDEBAR KISMI ---
+with st.sidebar:
+    # --- BU BUTONU EN ÜSTE EKLE ---
+    if st.button("❌ MENÜYÜ GİZLE", type="primary", use_container_width=True):
+        st.session_state.sidebar_durumu = 'collapsed'
+        st.rerun()
+    # ------------------------------
     st.markdown("### 👤 KİMLİK")
     if st.session_state.user and st.session_state.user != "ADMIN": 
         st.success(f"Hoşgeldin, {st.session_state.user}")
