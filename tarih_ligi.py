@@ -1653,7 +1653,7 @@ if st.session_state.get('page') == 'quiz':
     opacity = "0.2"
 else:
     bg_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Reprise_ch%C3%A2teau_Buda_1686.jpg/2560px-Reprise_ch%C3%A2teau_Buda_1686.jpg"
-    opacity = "0.2"
+    opacity = "0.5"
 
 st.markdown(f"""
 <style>
@@ -1701,23 +1701,23 @@ st.markdown(f"""
     .leader-xp {{ color: #FFD700; margin-left: 3px; font-size: 12px; }}
     .announcement-solid {{ background-color: #800000; color: white; padding: 10px; border-radius: 8px; border: 2px solid gold; text-align: center; font-weight: bold; margin-bottom: 15px; }}
 
-    /* YENİ EKLENEN CSS: İMZA VE BRE GAFİL ANIMASYONU */
-    .bre-gafil {
+    /* YENİ EKLENEN CSS: İMZA VE BRE GAFİL ANIMASYONU (DÜZELTİLMİŞ) */
+    .bre-gafil {{
         font-size: 60px; color: #B22222; text-align: center; font-weight: 900; animation: shake 0.6s; margin: 30px 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 0px #000;
-    }
-    @keyframes shake {
-        0% { transform: translate(1px, 1px) rotate(0deg); }
-        10% { transform: translate(-1px, -2px) rotate(-1deg); }
-        20% { transform: translate(-3px, 0px) rotate(1deg); }
-        30% { transform: translate(3px, 2px) rotate(0deg); }
-        40% { transform: translate(1px, -1px) rotate(1deg); }
-        50% { transform: translate(-1px, 2px) rotate(-1deg); }
-        60% { transform: translate(-3px, 1px) rotate(0deg); }
-        70% { transform: translate(3px, 1px) rotate(-1deg); }
-        80% { transform: translate(-1px, -1px) rotate(1deg); }
-        90% { transform: translate(1px, 2px) rotate(0deg); }
-        100% { transform: translate(1px, -2px) rotate(-1deg); }
-    }
+    }}
+    @keyframes shake {{
+        0% {{ transform: translate(1px, 1px) rotate(0deg); }}
+        10% {{ transform: translate(-1px, -2px) rotate(-1deg); }}
+        20% {{ transform: translate(-3px, 0px) rotate(1deg); }}
+        30% {{ transform: translate(3px, 2px) rotate(0deg); }}
+        40% {{ transform: translate(1px, -1px) rotate(1deg); }}
+        50% {{ transform: translate(-1px, 2px) rotate(-1deg); }}
+        60% {{ transform: translate(-3px, 1px) rotate(0deg); }}
+        70% {{ transform: translate(3px, 1px) rotate(-1deg); }}
+        80% {{ transform: translate(-1px, -1px) rotate(1deg); }}
+        90% {{ transform: translate(1px, 2px) rotate(0deg); }}
+        100% {{ transform: translate(1px, -2px) rotate(-1deg); }}
+    }}
 </style>
 """, unsafe_allow_html=True)
 
