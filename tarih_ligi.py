@@ -1863,11 +1863,12 @@ elif st.session_state.page == 'admin_panel' and st.session_state.user == "ADMIN"
             if not mistakes.empty: st.dataframe(mistakes, use_container_width=True)
             else: st.info("Bu öğrencinin kayıtlı hatası bulunmamaktadır.")
             
+
             st.write("")
             with st.form("admin_msg"):
                 msg_txt = st.text_area("Öğrenciye Özel Tavsiye/Mesaj Gönder:")
-               if st.form_submit_button("Gönder"):
-                    # BURASI GÜNCELLENDİ: Artık 3 bilgi gönderiyoruz ("ADMIN", Alıcı, Mesaj)
+                # Dikkat: Aşağıdaki 'if' ile yukarıdaki 'msg_txt' aynı hizada olmalı
+                if st.form_submit_button("Gönder"):
                     send_message("ADMIN", selected_student, msg_txt)
                     st.success("Mesaj iletildi.")
 
