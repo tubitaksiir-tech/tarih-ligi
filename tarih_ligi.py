@@ -259,7 +259,7 @@ def log_attempt(user, topic, q, choice, is_correct):
 # 📝 SORU HAVUZU (BURAYA YAPIŞTIRACAKSIN)
 # ==============================================================================
 SORU_HAVUZU = {
-   "1. Tarih ve Zaman": [
+    "1. Tarih ve Zaman": [
         {"q": "Tarih biliminin yöntemi, diğer bilim dallarından farklılık gösterir. Tarihçi, geçmişte yaşanmış olayları incelediği için deney ve gözlem yapma şansına sahip değildir. Buna göre tarih biliminin temel yöntemi aşağıdakilerden hangisidir?", "opts": ["Kaynak taraması ve belge incelemesi", "Laboratuvar ortamında analiz", "Formüllerle kesin sonuçlara ulaşma", "Geleceğe yönelik tahminlerde bulunma", "Doğa yasalarını keşfetme"], "a": "Kaynak taraması ve belge incelemesi"},
         {"q": "Tarihi olaylar hakkında bilgi veren her türlü malzemeye 'kaynak' denir. Aşağıdakilerden hangisi 'birinci elden kaynak' grubuna girer?", "opts": ["Ders kitapları", "Ansiklopediler", "İstiklal Madalyası", "Tarihi romanlar", "Araştırma makaleleri"], "a": "İstiklal Madalyası"},
         {"q": "Tarih; 'Olay' ve 'Olgu' olmak üzere iki kavramla açıklanır. Olay; kısa süreli gelişmelerdir. Olgu ise uzun süreli gelişmelerdir. Buna göre hangisi tarihi bir 'olgu'ya örnektir?", "opts": ["Malazgirt Savaşı", "Anadolu'nun Türkleşmesi", "İstanbul'un Fethi", "Cumhuriyetin İlanı", "Lozan Antlaşması"], "a": "Anadolu'nun Türkleşmesi"},
@@ -1677,9 +1677,37 @@ st.markdown(f"""
     div.stButton > button:not([kind="primary"]):hover {{ transform: scale(1.02); filter: brightness(1.2); border-color: white !important; }}
 
     .profile-img {{ width: 130px; height: 130px; border-radius: 15px; border: 3px solid {THEME.get('gold_color')}; object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }}
-    .header-box {{ background: linear-gradient(90deg, #1a2e22, #2F4F2F); border: 2px solid {THEME.get('gold_color')}; border-radius: 15px; padding: 15px; text-align: center; height: 140px; display: flex; flex-direction: column; justify-content: center; }}
+    
+    /* GÜNCELLENMİŞ HEADER KUTUSU VE İSİM AYARLARI */
+    .header-box {{
+        position: relative; /* Bu sayede içindeki isim absolute ile konumlanabilir */
+        background: linear-gradient(90deg, #1a2e22, #2F4F2F);
+        border: 2px solid {THEME.get('gold_color')};
+        border-radius: 15px;
+        padding: 15px;
+        text-align: center;
+        height: 140px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }}
+    
+    /* Alperen Süngü İsmi - Sağ Üst Köşede */
+    .signature-text {{
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-family: 'Brush Script MT', cursive;
+        font-size: 28px;
+        color: #DAA520;
+        text-shadow: 1px 1px 1px black;
+        transform: rotate(-5deg); /* Hafif eğik el yazısı stili */
+        font-weight: normal;
+    }}
+
     .crown-title {{ color: {THEME.get('gold_color')}; font-weight: bold; font-size: 24px; }}
     .main-title {{ font-family: 'Cinzel'; color: white; margin: 0; font-size: 48px; text-shadow: 2px 2px 5px black; }}
+    
     .admin-stat-box {{ background-color: #2e1a1a; padding: 15px; border-radius: 10px; border: 1px solid #FFD700; text-align: center; }}
     .admin-stat-value {{ font-size: 24px; font-weight: bold; color: white; }}
     .admin-stat-label {{ font-size: 14px; color: #ccc; }}
@@ -1701,7 +1729,7 @@ st.markdown(f"""
     .leader-xp {{ color: #FFD700; margin-left: 3px; font-size: 12px; }}
     .announcement-solid {{ background-color: #800000; color: white; padding: 10px; border-radius: 8px; border: 2px solid gold; text-align: center; font-weight: bold; margin-bottom: 15px; }}
 
-    /* YENİ EKLENEN CSS: İMZA VE BRE GAFİL ANIMASYONU (DÜZELTİLMİŞ) */
+    /* BRE GAFİL ANIMASYONU */
     .bre-gafil {{
         font-size: 60px; color: #B22222; text-align: center; font-weight: 900; animation: shake 0.6s; margin: 30px 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 0px #000;
     }}
@@ -1717,6 +1745,12 @@ st.markdown(f"""
         80% {{ transform: translate(-1px, -1px) rotate(1deg); }}
         90% {{ transform: translate(1px, 2px) rotate(0deg); }}
         100% {{ transform: translate(1px, -2px) rotate(-1deg); }}
+    }}
+    
+    /* Mobilde isim üst üste binmesin diye ayar */
+    @media (max-width: 600px) {{
+        .signature-text {{ font-size: 20px; top: 5px; right: 10px; }}
+        .main-title {{ font-size: 32px; }}
     }}
 </style>
 """, unsafe_allow_html=True)
@@ -1820,10 +1854,14 @@ elif st.session_state.page == 'home':
             with open("profil.jpg", "rb") as f: img_src = f"data:image/jpg;base64,{base64.b64encode(f.read()).decode()}"
         st.markdown(f'<img src="{img_src}" class="profile-img">', unsafe_allow_html=True)
     with c_h:
-        # İMZA BURAYA EKLENDİ
-        st.markdown(f"""<div class="header-box">
-        <div style="font-family: 'Brush Script MT', cursive; font-size: 32px; color: #DAA520; margin-bottom:-15px; text-shadow: 1px 1px 2px black;">Alperen Süngü</div>
-        <div class="crown-title">{THEME.get('crown_text')}</div><h1 class="main-title">{THEME.get('app_title')}</h1></div>""", unsafe_allow_html=True)
+        # İSİM SAĞA YASLI OLARAK BURAYA EKLENDİ
+        st.markdown(f"""
+        <div class="header-box">
+            <div class="signature-text">Alperen Süngü</div>
+            <div class="crown-title">{THEME.get('crown_text')}</div>
+            <h1 class="main-title">{THEME.get('app_title')}</h1>
+        </div>
+        """, unsafe_allow_html=True)
 
     if st.session_state.user != "ADMIN":
         with st.expander("📨 Yöneticiye Mesaj Gönder"):
