@@ -249,14 +249,12 @@ def get_all_users_status():
     try: df = pd.read_sql("SELECT username, xp, last_seen FROM users WHERE username != 'ADMIN' ORDER BY xp DESC", conn)
     except: df = pd.DataFrame(columns=["username", "xp", "last_seen"])
     conn.close(); return df
-
 def send_message(sender, receiver, msg):
     conn = get_db()
     c = conn.cursor()
     c.execute("INSERT INTO messages (sender, receiver, message) VALUES (?, ?, ?)", (sender, receiver, msg))
     conn.commit()
-    conn.close()    conn = get_db(); c = conn.cursor(); c.execute("INSERT INTO messages (sender, receiver, message) VALUES (?, ?, ?)", ("ADMIN", receiver, msg)); conn.commit(); conn.close()
-
+    conn.close()
 def get_unread_messages(user):
     conn = get_db(); c = conn.cursor(); c.execute("SELECT id, message FROM messages WHERE receiver=? AND is_read=0", (user,)); msgs = c.fetchall(); conn.close(); return msgs
 
