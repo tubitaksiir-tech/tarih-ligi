@@ -11,20 +11,26 @@ from datetime import datetime, timedelta
 import streamlit.components.v1 as components
 
 # ==============================================================================
-# ⚙️ SIDEBAR AYARI (DİNAMİK)
+# ⚙️ AKILLI SIDEBAR (OTOMATİK AÇ/KAPA)
 # ==============================================================================
-# Eğer 'page' session'da varsa ve 'login' değilse (yani içerideysek) menüyü kapat (collapsed)
-# Yoksa (yani ilk girişteysek) menüyü aç (expanded)
+# Varsayılan olarak menü AÇIK olsun (Login ve Home için)
 sidebar_durumu = "expanded"
-if 'page' in st.session_state and st.session_state.page != 'login':
-    sidebar_durumu = "collapsed"
+
+# Eğer session_state içinde 'page' bilgisi varsa kontrol et:
+if 'page' in st.session_state:
+    # Eğer "study" (Okuma) veya "quiz" (Mod/Soru) sayfasındaysak KAPAT
+    if st.session_state.page in ['study', 'quiz']:
+        sidebar_durumu = "collapsed"
+    # Eğer "home" (Ana Menü) veya "login" sayfasındaysak AÇ
+    else:
+        sidebar_durumu = "expanded"
 
 # --- 1. SAYFA AYARLARI ---
 st.set_page_config(
     page_title="TARİH LİGİ - YKS",
     page_icon="🦅",
     layout="wide",
-    initial_sidebar_state=sidebar_durumu  # Burası artık değişkene bağlı
+    initial_sidebar_state=sidebar_durumu  # Burası artık duruma göre değişiyor
 )
 
 # ==============================================================================
