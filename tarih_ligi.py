@@ -28,7 +28,7 @@ else:
     sidebar_modu = "expanded"
 
 # 3. Ayarı Uygula
-st.set_page_config(
+st.set_page_config
    # --- EN TEPEYE (Importlardan hemen sonraya) ---
 if 'sidebar_durumu' not in st.session_state:
     st.session_state.sidebar_durumu = 'expanded' # İlk açılışta açık olsun
