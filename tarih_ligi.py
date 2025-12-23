@@ -10,12 +10,21 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import streamlit.components.v1 as components
 
+# ==============================================================================
+# ⚙️ SIDEBAR AYARI (DİNAMİK)
+# ==============================================================================
+# Eğer 'page' session'da varsa ve 'login' değilse (yani içerideysek) menüyü kapat (collapsed)
+# Yoksa (yani ilk girişteysek) menüyü aç (expanded)
+sidebar_durumu = "expanded"
+if 'page' in st.session_state and st.session_state.page != 'login':
+    sidebar_durumu = "collapsed"
+
 # --- 1. SAYFA AYARLARI ---
 st.set_page_config(
     page_title="TARİH LİGİ - YKS",
     page_icon="🦅",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state=sidebar_durumu  # Burası artık değişkene bağlı
 )
 
 # ==============================================================================
