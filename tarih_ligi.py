@@ -11,26 +11,28 @@ from datetime import datetime, timedelta
 import streamlit.components.v1 as components
 
 # ==============================================================================
-# ⚙️ AKILLI SIDEBAR (OTOMATİK AÇ/KAPA)
+# ⚙️ AKILLI SIDEBAR (GARANTİLİ YÖNTEM)
 # ==============================================================================
-# Varsayılan olarak menü AÇIK olsun (Login ve Home için)
-sidebar_durumu = "expanded"
+# 1. Hangi sayfada olduğumuzu güvenli bir şekilde alalım.
+# Eğer 'page' henüz oluşmamışsa (ilk açılışsa) 'login' varsayalım.
+mevcut_sayfa = "login"
+if "page" in st.session_state:
+    mevcut_sayfa = st.session_state.page
 
-# Eğer session_state içinde 'page' bilgisi varsa kontrol et:
-if 'page' in st.session_state:
-    # Eğer "study" (Okuma) veya "quiz" (Mod/Soru) sayfasındaysak KAPAT
-    if st.session_state.page in ['study', 'quiz']:
-        sidebar_durumu = "collapsed"
-    # Eğer "home" (Ana Menü) veya "login" sayfasındaysak AÇ
-    else:
-        sidebar_durumu = "expanded"
+# 2. Sayfaya göre menü durumunu belirleyelim.
+# 'study' (Ders) veya 'quiz' (Soru) ekranındaysak menüyü KAPAT (collapsed)
+# Diğer durumlarda (Login, Home) menüyü AÇ (expanded)
+if mevcut_sayfa in ["study", "quiz"]:
+    sidebar_durumu = "collapsed"
+else:
+    sidebar_durumu = "expanded"
 
-# --- 1. SAYFA AYARLARI ---
+# 3. Sayfa ayarını uygula
 st.set_page_config(
     page_title="TARİH LİGİ - YKS",
     page_icon="🦅",
     layout="wide",
-    initial_sidebar_state=sidebar_durumu  # Burası artık duruma göre değişiyor
+    initial_sidebar_state=sidebar_durumu
 )
 
 # ==============================================================================
