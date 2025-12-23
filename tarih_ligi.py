@@ -1653,11 +1653,11 @@ if st.session_state.get('page') == 'quiz':
     opacity = "0.2"
 else:
     bg_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Reprise_ch%C3%A2teau_Buda_1686.jpg/2560px-Reprise_ch%C3%A2teau_Buda_1686.jpg"
-    opacity = "0.5"
+    opacity = "0.2"
 
 st.markdown(f"""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@600;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@600;800&family=Brush+Script+MT&display=swap');
 
     .stApp {{
         background-image: linear-gradient(rgba(0,0,0,{opacity}), rgba(0,0,0,{opacity})), url("{bg_url}");
@@ -1677,7 +1677,7 @@ st.markdown(f"""
     div.stButton > button:not([kind="primary"]):hover {{ transform: scale(1.02); filter: brightness(1.2); border-color: white !important; }}
 
     .profile-img {{ width: 130px; height: 130px; border-radius: 15px; border: 3px solid {THEME.get('gold_color')}; object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }}
-    .header-box {{ background: linear-gradient(90deg, #1a2e22, #2F4F2F); border: 2px solid {THEME.get('gold_color')}; border-radius: 15px; padding: 15px; text-align: center; height: 130px; display: flex; flex-direction: column; justify-content: center; }}
+    .header-box {{ background: linear-gradient(90deg, #1a2e22, #2F4F2F); border: 2px solid {THEME.get('gold_color')}; border-radius: 15px; padding: 15px; text-align: center; height: 140px; display: flex; flex-direction: column; justify-content: center; }}
     .crown-title {{ color: {THEME.get('gold_color')}; font-weight: bold; font-size: 24px; }}
     .main-title {{ font-family: 'Cinzel'; color: white; margin: 0; font-size: 48px; text-shadow: 2px 2px 5px black; }}
     .admin-stat-box {{ background-color: #2e1a1a; padding: 15px; border-radius: 10px; border: 1px solid #FFD700; text-align: center; }}
@@ -1700,6 +1700,24 @@ st.markdown(f"""
     .leader-badge {{ color: white; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 5px; }}
     .leader-xp {{ color: #FFD700; margin-left: 3px; font-size: 12px; }}
     .announcement-solid {{ background-color: #800000; color: white; padding: 10px; border-radius: 8px; border: 2px solid gold; text-align: center; font-weight: bold; margin-bottom: 15px; }}
+
+    /* YENİ EKLENEN CSS: İMZA VE BRE GAFİL ANIMASYONU */
+    .bre-gafil {
+        font-size: 60px; color: #B22222; text-align: center; font-weight: 900; animation: shake 0.6s; margin: 30px 0; font-family: 'Cinzel', serif; text-shadow: 2px 2px 0px #000;
+    }
+    @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        10% { transform: translate(-1px, -2px) rotate(-1deg); }
+        20% { transform: translate(-3px, 0px) rotate(1deg); }
+        30% { transform: translate(3px, 2px) rotate(0deg); }
+        40% { transform: translate(1px, -1px) rotate(1deg); }
+        50% { transform: translate(-1px, 2px) rotate(-1deg); }
+        60% { transform: translate(-3px, 1px) rotate(0deg); }
+        70% { transform: translate(3px, 1px) rotate(-1deg); }
+        80% { transform: translate(-1px, -1px) rotate(1deg); }
+        90% { transform: translate(1px, 2px) rotate(0deg); }
+        100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -1708,6 +1726,7 @@ if 'user' not in st.session_state: st.session_state.user = None
 if 'xp' not in st.session_state: st.session_state.xp = 0
 if 'page' not in st.session_state: st.session_state.page = 'login'
 if 'current_ogm_page' not in st.session_state: st.session_state.current_ogm_page = None
+if 'show_bre_gafil' not in st.session_state: st.session_state.show_bre_gafil = False
 
 if st.session_state.user: update_user_activity(st.session_state.user)
 
@@ -1801,7 +1820,10 @@ elif st.session_state.page == 'home':
             with open("profil.jpg", "rb") as f: img_src = f"data:image/jpg;base64,{base64.b64encode(f.read()).decode()}"
         st.markdown(f'<img src="{img_src}" class="profile-img">', unsafe_allow_html=True)
     with c_h:
-        st.markdown(f"""<div class="header-box"><div class="crown-title">{THEME.get('crown_text')}</div><h1 class="main-title">{THEME.get('app_title')}</h1></div>""", unsafe_allow_html=True)
+        # İMZA BURAYA EKLENDİ
+        st.markdown(f"""<div class="header-box">
+        <div style="font-family: 'Brush Script MT', cursive; font-size: 32px; color: #DAA520; margin-bottom:-15px; text-shadow: 1px 1px 2px black;">Alperen Süngü</div>
+        <div class="crown-title">{THEME.get('crown_text')}</div><h1 class="main-title">{THEME.get('app_title')}</h1></div>""", unsafe_allow_html=True)
 
     if st.session_state.user != "ADMIN":
         with st.expander("📨 Yöneticiye Mesaj Gönder"):
@@ -1896,8 +1918,19 @@ elif st.session_state.page == 'study':
 # --- QUIZ ---
 elif st.session_state.page == 'quiz':
     idx=st.session_state.q_idx; qs=st.session_state.quiz_q
-    st.markdown(f"<div class='announcement-solid' style='background:#1e3c2f'>SORU {idx+1}/{len(qs)} | PUAN: {st.session_state.score}</div>", unsafe_allow_html=True)
-    if idx < len(qs):
+    
+    # 1. DURUM: BRE GAFİL EKRANI
+    if st.session_state.show_bre_gafil:
+        st.markdown('<div class="bre-gafil">BRE GAFİL! 😡</div>', unsafe_allow_html=True)
+        st.error(f"Hocan öğretmedi mi?! Diğer soruya geç!")
+        if st.button("Sıradaki Soruya Geç ➡️", type="primary"):
+            st.session_state.show_bre_gafil = False
+            st.session_state.q_idx += 1
+            st.rerun()
+
+    # 2. DURUM: NORMAL SORU EKRANI
+    elif idx < len(qs):
+        st.markdown(f"<div class='announcement-solid' style='background:#1e3c2f'>SORU {idx+1}/{len(qs)} | PUAN: {st.session_state.score}</div>", unsafe_allow_html=True)
         q = qs[idx]
         st.markdown(f"<div style='background:rgba(255,255,255,0.9);padding:20px;border-radius:10px;border:3px solid #8B0000;text-align:center;color:black;margin-bottom:10px'><h3>{q['q']}</h3></div>", unsafe_allow_html=True)
         ch = st.radio("Cevap:", q['opts'], key=f"q_{idx}", label_visibility="collapsed")
@@ -1909,11 +1942,17 @@ elif st.session_state.page == 'quiz':
                 st.balloons(); st.session_state.score+=10; st.session_state.xp+=10
                 update_user_xp(st.session_state.user, st.session_state.xp)
                 st.success("DOĞRU! +10 XP")
-            else: st.error(f"YANLIŞ! Cevap: {q['a']}")
-            time.sleep(1.5); st.session_state.q_idx+=1; st.rerun()
+                time.sleep(1); st.session_state.q_idx+=1; st.rerun()
+            else:
+                # BRE GAFİL MODUNA GEÇİŞ
+                st.session_state.show_bre_gafil = True
+                st.rerun()
+    
+    # 3. DURUM: OYUN BİTTİ
     else:
         st.balloons()
         st.markdown(f"<div class='announcement-solid'>BİTTİ! Toplam Puan: {st.session_state.score}</div>", unsafe_allow_html=True)
+    
     st.markdown("---")
     if st.button("🏠 ANA MENÜYE DÖN", use_container_width=True):
-        st.session_state.page = 'home'; st.rerun()
+        st.session_state.page = 'home'; st.session_state.show_bre_gafil = False; st.rerun()
