@@ -9,6 +9,9 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import streamlit.components.v1 as components
+# --- EN TEPEYE (Importlardan hemen sonraya) ---
+if 'sidebar_durumu' not in st.session_state:
+    st.session_state.sidebar_durumu = 'expanded' # İlk açılışta açık olsun
 
 # ==============================================================================
 # ⚙️ SIDEBAR (SOL MENÜ) AYARI - EN KRİTİK BÖLÜM
@@ -28,18 +31,12 @@ else:
     sidebar_modu = "expanded"
 
 # 3. Ayarı Uygula
-st.set_page_config
-   # --- EN TEPEYE (Importlardan hemen sonraya) ---
-if 'sidebar_durumu' not in st.session_state:
-    st.session_state.sidebar_durumu = 'expanded' # İlk açılışta açık olsun
-
 st.set_page_config(
     page_title="TARİH LİGİ - YKS",
     page_icon="🦅",
     layout="wide",
     initial_sidebar_state=st.session_state.sidebar_durumu
 )
-
 # ==============================================================================
 # 📍 İÇERİK HARİTASI (27 KONU)
 # ==============================================================================
