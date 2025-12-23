@@ -249,9 +249,12 @@ def get_all_users_status():
     except: df = pd.DataFrame(columns=["username", "xp", "last_seen"])
     conn.close(); return df
 
-def send_message(receiver, msg):
-    conn = get_db(); c = conn.cursor(); c.execute("INSERT INTO messages (sender, receiver, message) VALUES (?, ?, ?)", ("ADMIN", receiver, msg)); conn.commit(); conn.close()
-
+def send_message(sender, receiver, msg):
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("INSERT INTO messages (sender, receiver, message) VALUES (?, ?, ?)", (sender, receiver, msg))
+    conn.commit()
+    conn.close()
 def get_unread_messages(user):
     conn = get_db(); c = conn.cursor(); c.execute("SELECT id, message FROM messages WHERE receiver=? AND is_read=0", (user,)); msgs = c.fetchall(); conn.close(); return msgs
 
@@ -1863,8 +1866,9 @@ elif st.session_state.page == 'admin_panel' and st.session_state.user == "ADMIN"
             st.write("")
             with st.form("admin_msg"):
                 msg_txt = st.text_area("Öğrenciye Özel Tavsiye/Mesaj Gönder:")
-                if st.form_submit_button("Gönder"):
-                    send_message(selected_student, msg_txt)
+              if st.form_submit_button("Gönder"):
+                    # BURASI GÜNCELLENDİ: Artık 3 bilgi gönderiyoruz ("ADMIN", Alıcı, Mesaj)
+                    send_message("ADMIN", selected_student, msg_txt)
                     st.success("Mesaj iletildi.")
 
 # --- HOME ---
