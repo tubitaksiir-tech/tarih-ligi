@@ -11,20 +11,28 @@ from datetime import datetime, timedelta
 import streamlit.components.v1 as components
 
 # ==============================================================================
-# ⚙️ SIDEBAR AYARI (DİNAMİK)
+# ⚙️ SIDEBAR (SOL MENÜ) AYARI - EN KRİTİK BÖLÜM
 # ==============================================================================
-# Eğer 'page' session'da varsa ve 'login' değilse (yani içerideysek) menüyü kapat (collapsed)
-# Yoksa (yani ilk girişteysek) menüyü aç (expanded)
-sidebar_durumu = "expanded"
-if 'page' in st.session_state and st.session_state.page != 'login':
-    sidebar_durumu = "collapsed"
+# Bu blok kodun EN TEPESİNDE olmalı. Diğer her şeyden önce çalışmalı.
 
-# --- 1. SAYFA AYARLARI ---
+# 1. Hangi sayfadayız kontrol et. Henüz yoksa 'login' say.
+if 'page' not in st.session_state:
+    st.session_state.page = 'login'
+
+# 2. Sayfaya göre menü durumunu belirle.
+# 'study' (Ders) veya 'quiz' (Soru) ekranındaysak KAPAT (collapsed).
+# Diğerlerinde (Giriş, Ana Menü, Admin vb.) AÇ (expanded).
+if st.session_state.page in ['study', 'quiz']:
+    sidebar_modu = "collapsed"
+else:
+    sidebar_modu = "expanded"
+
+# 3. Ayarı Uygula
 st.set_page_config(
     page_title="TARİH LİGİ - YKS",
     page_icon="🦅",
     layout="wide",
-    initial_sidebar_state=sidebar_durumu  # Burası artık değişkene bağlı
+    initial_sidebar_state=sidebar_modu 
 )
 
 # ==============================================================================
