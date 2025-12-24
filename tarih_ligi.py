@@ -1982,9 +1982,10 @@ elif st.session_state.page == 'study':
                     components.html(content_html, height=600, scrolling=True)
             else: st.info("Ansiklopedi kaynağı bulunamadı.")
 
-# --- QUIZ ---
+# --- QUIZ BÖLÜMÜ (ŞIKLARI KARIŞTIRAN VERSİYON) ---
 elif st.session_state.page == 'quiz':
-    idx=st.session_state.q_idx; qs=st.session_state.quiz_q
+    idx = st.session_state.q_idx
+    qs = st.session_state.quiz_q
     
     # 1. DURUM: BRE GAFİL EKRANI
     if st.session_state.show_bre_gafil:
@@ -1997,19 +1998,43 @@ elif st.session_state.page == 'quiz':
 
     # 2. DURUM: NORMAL SORU EKRANI
     elif idx < len(qs):
-        st.markdown(f"<div class='announcement-solid' style='background:#1e3c2f'>SORU {idx+1}/{len(qs)} | PUAN: {st.session_state.score}</div>", unsafe_allow_html=True)
         q = qs[idx]
+
+        # --- ŞIKLARI KARIŞTIRMA MANTIĞI (YENİ EKLENDİ) ---
+        # Eğer 'active_opts' hafızada yoksa veya yeni soruya geçtiysek şıkları karıştır.
+        if 'active_opts' not in st.session_state: st.session_state.active_opts = []
+        if 'last_shuffled_idx' not in st.session_state: st.session_state.last_shuffled_idx = -1
+
+        if st.session_state.last_shuffled_idx != idx:
+            temp_opts = q['opts'][:] # Şıkların kopyasını al
+            random.shuffle(temp_opts) # İyice karıştır
+            st.session_state.active_opts = temp_opts # Kaydet
+            st.session_state.last_shuffled_idx = idx
+        # ---------------------------------------------------
+
+        st.markdown(f"<div class='announcement-solid' style='background:#1e3c2f'>SORU {idx+1}/{len(qs)} | PUAN: {st.session_state.score}</div>", unsafe_allow_html=True)
+        
         st.markdown(f"<div style='background:rgba(255,255,255,0.9);padding:20px;border-radius:10px;border:3px solid #8B0000;text-align:center;color:black;margin-bottom:10px'><h3>{q['q']}</h3></div>", unsafe_allow_html=True)
-        ch = st.radio("Cevap:", q['opts'], key=f"q_{idx}", label_visibility="collapsed")
+        
+        # Artık karıştırılmış şıkları (active_opts) kullanıyoruz
+        ch = st.radio("Cevap:", st.session_state.active_opts, key=f"q_{idx}", label_visibility="collapsed")
+        
         st.write("")
         if st.button("YANITLA 🚀", type="primary", use_container_width=True):
+            # Cevap kontrolü (Metinler birebir aynı olmalı)
             corr = (ch == q['a'])
+            
             log_attempt(st.session_state.user, st.session_state.quiz_topic, q['q'], ch, corr)
+            
             if corr:
-                st.balloons(); st.session_state.score+=10; st.session_state.xp+=10
+                st.balloons()
+                st.session_state.score += 10
+                st.session_state.xp += 10
                 update_user_xp(st.session_state.user, st.session_state.xp)
                 st.success("DOĞRU! +10 XP")
-                time.sleep(1); st.session_state.q_idx+=1; st.rerun()
+                time.sleep(1)
+                st.session_state.q_idx += 1
+                st.rerun()
             else:
                 # BRE GAFİL MODUNA GEÇİŞ
                 st.session_state.show_bre_gafil = True
@@ -2022,4 +2047,6 @@ elif st.session_state.page == 'quiz':
     
     st.markdown("---")
     if st.button("🏠 ANA MENÜYE DÖN", use_container_width=True):
-        st.session_state.page = 'home'; st.session_state.show_bre_gafil = False; st.rerun()
+        st.session_state.page = 'home'
+        st.session_state.show_bre_gafil = False
+        st.rerun()
